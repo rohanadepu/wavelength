@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>Wavelength — A Mind-Reading Party Game</title>
+  <meta name="description" content="Play Wavelength online with friends. A cooperative mind-reading party game.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ══════════ LANDING ══════════ -->
+  <section id="screen-landing" class="screen active">
+    <div class="landing-bg"></div>
+    <div class="landing-content">
+      <div class="logo-container">
+        <div class="logo-wave"></div>
+        <h1 class="logo-text">WAVELENGTH</h1>
+        <p class="logo-subtitle">A mind-reading party game</p>
+      </div>
+      <div class="landing-actions">
+        <button id="btn-create" class="btn btn-primary btn-glow">✦ Create Room</button>
+        <button id="btn-join-show" class="btn btn-secondary">→ Join Room</button>
+      </div>
+      <div id="join-form" class="join-form hidden">
+        <input type="text" id="input-room-code" class="input-glass" placeholder="ABCD" maxlength="4" autocomplete="off">
+        <button id="btn-join" class="btn btn-primary btn-sm">Join</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ NAME ══════════ -->
+  <section id="screen-name" class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title">Who are you?</h2>
+      <div class="name-form">
+        <input type="text" id="input-name" class="input-glass input-lg" placeholder="Your Name" maxlength="16" autocomplete="off">
+        <div class="avatar-picker">
+          <p class="picker-label">Pick an avatar</p>
+          <div class="emoji-grid" id="emoji-grid">
+            <button class="emoji-btn selected" data-emoji="😎">😎</button>
+            <button class="emoji-btn" data-emoji="🤠">🤠</button>
+            <button class="emoji-btn" data-emoji="🦊">🦊</button>
+            <button class="emoji-btn" data-emoji="🐙">🐙</button>
+            <button class="emoji-btn" data-emoji="🌮">🌮</button>
+            <button class="emoji-btn" data-emoji="🔮">🔮</button>
+            <button class="emoji-btn" data-emoji="🎯">🎯</button>
+            <button class="emoji-btn" data-emoji="🚀">🚀</button>
+            <button class="emoji-btn" data-emoji="🧠">🧠</button>
+            <button class="emoji-btn" data-emoji="👻">👻</button>
+            <button class="emoji-btn" data-emoji="🦄">🦄</button>
+            <button class="emoji-btn" data-emoji="🍕">🍕</button>
+            <button class="emoji-btn" data-emoji="⭐">⭐</button>
+            <button class="emoji-btn" data-emoji="🎸">🎸</button>
+            <button class="emoji-btn" data-emoji="🐱">🐱</button>
+            <button class="emoji-btn" data-emoji="🌈">🌈</button>
+          </div>
+        </div>
+        <div class="color-picker">
+          <p class="picker-label">Pick a color</p>
+          <div class="color-grid" id="color-grid">
+            <button class="color-btn selected" data-color="#7c3aed" style="background:#7c3aed"></button>
+            <button class="color-btn" data-color="#ec4899" style="background:#ec4899"></button>
+            <button class="color-btn" data-color="#06b6d4" style="background:#06b6d4"></button>
+            <button class="color-btn" data-color="#10b981" style="background:#10b981"></button>
+            <button class="color-btn" data-color="#f59e0b" style="background:#f59e0b"></button>
+            <button class="color-btn" data-color="#ef4444" style="background:#ef4444"></button>
+            <button class="color-btn" data-color="#8b5cf6" style="background:#8b5cf6"></button>
+            <button class="color-btn" data-color="#3b82f6" style="background:#3b82f6"></button>
+          </div>
+        </div>
+        <button id="btn-confirm-name" class="btn btn-primary">Let's Go!</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ LOBBY ══════════ -->
+  <section id="screen-lobby" class="screen">
+    <div class="screen-inner">
+      <div class="lobby-header">
+        <h2 class="screen-title">Waiting Room</h2>
+        <div class="room-code-display">
+          <span class="room-code-label">Room Code</span>
+          <span class="room-code" id="lobby-room-code">XXXX</span>
+          <button class="btn-copy" id="btn-copy-code" title="Copy">📋</button>
+        </div>
+      </div>
+      <div class="player-list" id="lobby-players"></div>
+      <div class="lobby-footer">
+        <p class="player-count"><span id="lobby-count">0</span>/10 players</p>
+        <button id="btn-start-game" class="btn btn-primary btn-glow hidden">▶ Start Game</button>
+        <p id="lobby-waiting" class="waiting-text">Waiting for host to start...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ GAME ══════════ -->
+  <section id="screen-game" class="screen">
+    <div class="game-container">
+      <!-- Top Bar -->
+      <div class="game-top-bar">
+        <div class="round-badge">Round <span id="game-round">1</span>/<span id="game-total-rounds">10</span></div>
+        <div class="score-badge">Score: <span id="game-score">0</span></div>
+      </div>
+
+      <!-- Role Badge -->
+      <div id="role-badge" class="role-badge"></div>
+
+      <!-- Psychic: Clue Input (only psychic sees this) -->
+      <div id="psychic-section" class="psychic-section hidden">
+        <p class="psychic-hint">Give a one-word clue for where the target is on the spectrum!</p>
+        <div class="clue-input-group">
+          <input type="text" id="input-clue" class="input-glass" placeholder="Your clue..." maxlength="40" autocomplete="off">
+          <button id="btn-submit-clue" class="btn btn-primary btn-sm">Send</button>
+        </div>
+      </div>
+
+      <!-- Guesser: Waiting for clue -->
+      <div id="waiting-clue-section" class="waiting-section hidden">
+        <div class="waiting-pulse"></div>
+        <p class="waiting-text">Waiting for <span id="psychic-name">Psychic</span>'s clue...</p>
+      </div>
+
+      <!-- Clue Display (shown to everyone once clue is submitted) -->
+      <div id="clue-display" class="clue-display hidden">
+        <span class="clue-label">THE CLUE</span>
+        <span class="clue-text" id="clue-text">"..."</span>
+        <span class="clue-by">by <span id="clue-by">Psychic</span></span>
+      </div>
+
+      <!-- DIAL — Canvas-based Wavelength dial -->
+      <div class="dial-wrapper" id="dial-wrapper">
+        <canvas id="dial-canvas" width="380" height="220"></canvas>
+        <div class="dial-spectrum-labels">
+          <div class="spectrum-label-left">
+            <span class="spectrum-arrow">←</span>
+            <span class="spectrum-text" id="spectrum-left">Hot</span>
+          </div>
+          <div class="spectrum-label-right">
+            <span class="spectrum-text" id="spectrum-right">Cold</span>
+            <span class="spectrum-arrow">→</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ready / Lock In -->
+      <div id="ready-section" class="ready-section hidden">
+        <div class="ready-status"><span id="ready-count">0</span>/<span id="ready-total">0</span> ready</div>
+        <button id="btn-ready" class="btn btn-primary btn-glow">✓ Lock In</button>
+      </div>
+
+      <!-- Psychic watching -->
+      <div id="psychic-watching" class="psychic-watching hidden">
+        <p class="watching-hint">Watch as your team discusses...</p>
+        <div class="ready-status"><span id="psychic-ready-count">0</span>/<span id="psychic-ready-total">0</span> ready</div>
+      </div>
+
+      <!-- Emoji Bar -->
+      <div class="emoji-bar" id="emoji-bar">
+        <button class="emoji-react-btn" data-reaction="🔥">🔥</button>
+        <button class="emoji-react-btn" data-reaction="😂">😂</button>
+        <button class="emoji-react-btn" data-reaction="🤔">🤔</button>
+        <button class="emoji-react-btn" data-reaction="😱">😱</button>
+        <button class="emoji-react-btn" data-reaction="👏">👏</button>
+        <button class="emoji-react-btn" data-reaction="💀">💀</button>
+      </div>
+      <div id="floating-emojis"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ REVEAL ══════════ -->
+  <section id="screen-reveal" class="screen">
+    <div class="screen-inner reveal-inner">
+      <h2 class="reveal-title" id="reveal-title">Nice!</h2>
+      <div class="reveal-points">
+        <span class="points-num" id="reveal-points">0</span>
+        <span class="points-label">points</span>
+      </div>
+      <div class="reveal-detail">
+        <div class="reveal-stat"><span class="stat-label">Target</span><span class="stat-value" id="reveal-target">50</span></div>
+        <div class="reveal-stat"><span class="stat-label">Your Dial</span><span class="stat-value" id="reveal-dial">50</span></div>
+        <div class="reveal-stat"><span class="stat-label">Distance</span><span class="stat-value" id="reveal-distance">0</span></div>
+      </div>
+      <div class="reveal-total">Total: <span id="reveal-total-score">0</span></div>
+      <button id="btn-next-round" class="btn btn-primary btn-glow hidden">Next Round →</button>
+      <p id="reveal-waiting" class="waiting-text">Waiting for host...</p>
+    </div>
+  </section>
+
+  <!-- ══════════ GAME OVER ══════════ -->
+  <section id="screen-gameover" class="screen">
+    <div class="screen-inner gameover-inner">
+      <div class="gameover-confetti" id="gameover-confetti"></div>
+      <h2 class="gameover-title">Game Over!</h2>
+      <div class="gameover-score">
+        <span class="final-score-num" id="final-score">0</span>
+        <span class="final-score-label">out of <span id="final-max">40</span></span>
+      </div>
+      <div class="gameover-grade" id="gameover-grade">🌊 Wavelength Masters!</div>
+      <div class="round-summary" id="round-summary"></div>
+      <button id="btn-play-again" class="btn btn-primary btn-glow hidden">Play Again</button>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
